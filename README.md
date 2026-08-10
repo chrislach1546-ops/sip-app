@@ -1,7 +1,7 @@
 # Sip
 
-**A café-discovery iOS app for Los Angeles, built on reviews from people you actually follow
-rather than aggregate star ratings.**
+**A social café-discovery app for Los Angeles, where the community rates cafés by what they
+actually drank.**
 
 Solo project. React Native / Expo, Supabase Postgres, ~3,000 real LA cafés built from open geodata.
 Currently in launch prep for the App Store.
@@ -20,13 +20,19 @@ dependencies.
 
 ## The idea
 
-Every café app answers "what's near me, and what's its average rating?" Averages are the problem.
-A 4.3 from two thousand strangers tells you nothing about whether *you* will like a place, and the
-people whose taste you actually trust are invisible in it.
+Every café app answers "what's near me, and what's its average rating?" The rating is the weak
+part. A 4.3 stitched together from anonymous text reviews tells you almost nothing — you don't know
+what those people ordered, whether they even went, or what they'd have said about the flat white
+you're about to buy.
 
-Sip inverts that. You follow people. You see where **they** went, what they ordered, and what they
-thought. A café's rating is assembled from the people in your graph, not from the internet at
-large. The unit of content is a *sip* — one drink, at one café, with a photo and a rating.
+The unit of content in Sip is a **sip**: one drink, at one café, with a photo and a rating. Not a
+paragraph about the ambience — the actual thing someone drank. A café's score is built from the
+community's real, logged visits, which means it's answerable at the level that matters: *is the
+coffee good*, and *what should I order*.
+
+On top of that sits a social layer. You follow people, see where they've been and what they
+ordered, share cafés with them, and build lists together. So the community tells you a café is
+worth going to, and the people whose taste you trust tell you what to get when you're there.
 
 ---
 

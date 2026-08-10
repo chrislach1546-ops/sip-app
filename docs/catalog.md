@@ -128,10 +128,11 @@ Google's and Apple's terms forbid using their place data to build a competing da
 competing database. That isn't a grey area to be revisited when a scrape fails — it's excluded at
 the spec level, and the importer is forbidden from falling back to it.
 
-The second reason is the product. Sip exists because aggregate ratings from strangers are the thing
-worth replacing. Seeding it with someone else's aggregate ratings would defeat the premise before
-the first user arrived. Ratings seeded from third parties are rejected outright rather than
-deferred.
+The second reason is the product. Every rating in Sip has a real, logged visit behind it — someone
+was there, ordered something, and said what they thought of it. Seeding the catalog with someone
+else's scraped star averages would put ratings in the app that nobody in the community actually
+gave, which defeats the premise before the first user arrives. Ratings from third parties are
+rejected outright rather than deferred.
 
 So the catalog is OpenStreetMap and Overture, both openly licensed, with attribution carried in
 every generated migration header. When a café's own website is read for opening hours, it's done

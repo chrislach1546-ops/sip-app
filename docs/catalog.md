@@ -1,9 +1,10 @@
 # Building a catalog you can trust
 
 A café catalog is not a one-time import. Sources disagree, businesses close, names get corrected
-upstream, and a tenant turns over without anyone updating the map. The catalog holds **3,087 Los
-Angeles cafés** — 1,794 from Overture Maps, 1,271 from OpenStreetMap, 22 hand-seeded — and it has
-been rebuilt, corrected, expanded and pruned across 89 migrations.
+upstream, and a tenant turns over without anyone updating the map. The catalog holds **2,600 open
+Los Angeles cafés** (September 2026), drawn from Overture Maps and OpenStreetMap plus a few
+hand-seeded, and it has been rebuilt, corrected, expanded, verified and pruned across more than 170
+migrations.
 
 The whole design follows from one constraint.
 
@@ -84,8 +85,9 @@ run.
 
 ## Deletions: reviewable, listed, reversible
 
-Cafés do get removed — boba shops when the catalog narrowed to coffee, places that aren't cafés at
-all, businesses that closed. Every removal obeys three rules:
+Cafés do get removed — boba shops when the catalog briefly narrowed to coffee (a ruling later
+reversed — the case rule 3 below is for), places that aren't cafés at all, businesses
+that closed. Every removal obeys three rules:
 
 **1. It ships as a migration listing every affected id**, with the tags or evidence justifying each
 one. Nothing is deleted by a category sweep no human read. When 91 rows were removed in one pass,
@@ -109,33 +111,37 @@ accident.
 
 ## What's still not solved
 
-**Closure is under-detected.** Nine dead cafés turned up in a hand-sample of twenty-one. The
-automated closure re-check returns zero, and Overture's confidence score catches only some. Nobody
-has swept the other ~3,000 rows. That's written down as an open problem rather than quietly
-assumed away — a catalog that confidently lists a café that closed last year is exactly the failure
-this project is supposed to avoid.
+**Closure was under-detected, and is now mostly checked.** Nine dead cafés turned up in a
+hand-sample of twenty-one, while the automated closure re-check returned zero. So the whole catalog
+got a liveness pass (August 2026): **2,133 cafés verified open, 18 retired, 11 renamed.** The rows
+that pass couldn't settle went to a hand check in September, which retired 13 more and confirmed 20.
+
+It isn't finished. About 485 open cafés still carry no verification stamp, and how many of those
+were never really checked hasn't been measured. A catalog that confidently lists a café that closed
+last year is exactly the failure this project is supposed to avoid, so that number is written down
+rather than rounded away.
 
 **City names are partly placeholder.** Resolved by true polygon containment where boundaries exist,
 nearest-node where they don't, and still carrying a county-level fallback for some rows.
 
 ---
 
-## Why not just use Google Places
+## Where the data comes from, and what's kept out
 
-Two reasons, and the licensing one is the binding one.
-
-Google's and Apple's terms forbid using their place data to build a competing database. This *is* a
-competing database. That isn't a grey area to be revisited when a scrape fails — it's excluded at
-the spec level, and the importer is forbidden from falling back to it.
-
-The second reason is the product. Every rating in Sip has a real, logged visit behind it — someone
-was there, ordered something, and said what they thought of it. Seeding the catalog with someone
-else's scraped star averages would put ratings in the app that nobody in the community actually
-gave, which defeats the premise before the first user arrives. Ratings from third parties are
-rejected outright rather than deferred.
-
-So the catalog is OpenStreetMap and Overture, both openly licensed, with attribution carried in
-every generated migration header. When a café's own website is read for opening hours, it's done
-politely — robots.txt honoured per host, one request per second, honest User-Agent, and never an
-aggregator. That code is public in
+The catalog's *rows* come from OpenStreetMap and Overture Maps, both openly licensed, with
+attribution carried in every generated migration header. When a café's own website is read for
+opening hours, it's done politely: robots.txt honoured per host, one request per second, an honest
+User-Agent, and never an aggregator. That code is public in
 [open-place-toolkit](https://github.com/chrislach1546-ops/open-place-toolkit).
+
+Open data is where a row starts, not proof that it's right. Names carry typos and old trading
+names, and pins drift onto the business next door. So cafés are checked against their current
+public listings in hand-run passes: is it still open, is the name right, is the pin on the right
+storefront. Each pass writes a proposal a human reads, and whatever changes ships as a migration
+like every other catalog change.
+
+**Ratings are the one thing never imported.** Every rating in Sip has a real, logged visit behind
+it: someone was there, ordered something, and said what they thought of it. Seeding the catalog
+with another platform's star averages would put ratings in the app that nobody in the community
+actually gave, which defeats the premise before the first user arrives. Third-party ratings are
+rejected outright, not deferred.

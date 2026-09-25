@@ -1,9 +1,9 @@
 # Testing the security boundary, not the login screen
 
 Sip stores real people's accounts, their locations, their private notes, and their messages. The
-part that protects all of it is not the login screen. It's 61 row-level-security policies in
-Postgres — and those policies have their own test suite, 54 files and 560 assertions, run like
-application code.
+part that protects all of it is not the login screen. It's 65 row-level-security policies in
+Postgres — and those policies have their own test suite, 86 files and 2,241 assertions, run like
+application code on every push.
 
 ---
 
@@ -25,7 +25,8 @@ proves that an authenticated stranger asking for your private sip **gets nothing
 The service-role key — the one that bypasses RLS entirely — never appears in the app bundle, never
 appears in the repository, and is read from the environment in the handful of server-side scripts
 that need it. That's verified: scanning every blob in the git object database, including 151
-commits unreachable from any branch, turns up no real credential in the project's entire history.
+commits unreachable from any branch, turned up no real credential in the project's entire history.
+Since September a secret scanner (gitleaks) re-checks the full history on every push.
 
 ---
 
@@ -33,10 +34,12 @@ commits unreachable from any branch, turns up no real credential in the project'
 
 | | |
 |---|---|
-| Public tables | 24 |
-| Tables with RLS enabled | **24** |
+| Public tables | 35 |
+| Tables with RLS enabled | **35** |
 | Tables without RLS | **0** |
-| Policies | 61 |
+| Policies | 65 |
+
+<sub>Measured 25 September 2026.</sub>
 
 There is no "we'll add policies to that one later" table. A table without policies denies
 everything by default, which is the correct failure mode, and no table ships without explicit
@@ -120,9 +123,12 @@ Both are written into the relevant migration headers rather than left for someon
 - **A three-mark award can be raced.** Two concurrent inserts can each read `marked = 2` and both
   be granted, producing four. The fix is an advisory transaction lock; it isn't applied yet because
   the window is small and the consequence is cosmetic.
-- **`on_site` is client-asserted.** There's no server-side oracle proving someone was physically at
-  a café. Pre-existing and by design, but worth naming, because a feature that rewards being there
-  is the first thing that makes spoofing it worth anyone's effort.
+- **`on_site` is client-asserted.** The phone checks that you're within 75 m of the café before a
+  sip can be shared, and a database trigger refuses a shared sip that arrives without that flag. But
+  the phone decides the flag, so a modified client could still claim it from anywhere. Closing that
+  would mean sending raw coordinates to the server, which the privacy policy promises doesn't happen,
+  and the privacy guarantee was judged worth more than the hole. The trigger closes the likelier
+  gap: a future code path that forgets the check.
 
 Writing these down is the point. A known, documented limitation is a decision. An undocumented one
 is a surprise waiting for whoever reads the code next.
